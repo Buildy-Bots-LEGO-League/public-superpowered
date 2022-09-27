@@ -225,6 +225,8 @@ class DistanceSensor:
 
         """
 
+        if isinstance(distance, int):
+            distance = distance * 1.0
         if not isinstance(distance, float):
             raise TypeError("wait_for_distance_farther_than distance must be a float")
         if not isinstance(unit, str):
@@ -269,6 +271,8 @@ class DistanceSensor:
 
         """
 
+        if isinstance(distance, int):
+            distance = distance * 1.0
         if not isinstance(distance, float):
             raise TypeError("wait_for_distance_closer_than distance must be a float")
         if not isinstance(unit, str):

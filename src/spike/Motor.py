@@ -201,7 +201,8 @@ class Motor:
             rotations is not a number or speed is not an integer.
 
         """
-
+        if isinstance(rotations, int):
+            rotations = rotations * 1.0
         if not isinstance(rotations, float):
             raise TypeError("rotations must be a float")
 
@@ -237,7 +238,8 @@ class Motor:
             seconds is not a number or speed is not an integer.
 
         """
-
+        if isinstance(seconds, int):
+            seconds = seconds * 1.0
         if not isinstance(seconds, float):
             raise TypeError("seconds must be a float")
 

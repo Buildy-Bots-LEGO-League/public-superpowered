@@ -42,6 +42,8 @@ class Speaker:
         if 44 <= note <= 123:
             raise ValueError("note must be in the range 44 - 123 inclusive.")
 
+        if isinstance(seconds, int):
+            seconds = seconds * 1.0
         if not isinstance(seconds, float):
             raise TypeError("seconds must be a decimal number")
 
