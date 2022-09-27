@@ -96,7 +96,8 @@ class MotorPair:
         ValueError
             unit is not one of the allowed values or steering or speed is outside the allowed range
         """
-
+        if isinstance(amount, int):
+            amount = amount * 1.0
         if not isinstance(amount, float):
             raise TypeError("amount must be a float")
 
@@ -238,7 +239,8 @@ class MotorPair:
             unit is not one of the allowed values.
 
         """
-
+        if isinstance(amount, int):
+            amount = amount * 1.0
         if not isinstance(amount, float):
             raise TypeError("amount must be a float")
 
@@ -449,6 +451,8 @@ class MotorPair:
         ValueError
             unit is not one of the allowed values.
         """
+        if isinstance(amount, int):
+            amount = amount * 1.0
         if not isinstance(amount, float):
             raise TypeError("amount must be a float")
 

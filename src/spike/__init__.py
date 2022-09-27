@@ -6,6 +6,7 @@ from .ForceSensor import ForceSensor
 from .LightMatrix import LightMatrix
 from .MotionSensor import MotionSensor
 from .Motor import Motor
+from .MotorPair import MotorPair
 from .PrimeHub import PrimeHub
 from .Speaker import Speaker
 from .StatusLight import StatusLight
