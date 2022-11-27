@@ -1,41 +1,40 @@
-from spike import PrimeHub, MotorPair, ColorSensor
-from spike.control import Timer
-
+from spike import PrimeHub, MotorPair, Motor, ColorSensor, LightMatrix
 
 motorPair = MotorPair("A", "B")
+
+leftMotor = Motor("A")
+
 primeHub = PrimeHub()
+
+lightMatrix = primeHub.light_matrix
 
 leftSensor = ColorSensor("C")
 rightSensor = ColorSensor("D")
 
-basePower = 40.0
+base_power = 40.0
 
-timer = Timer()
+def single_follow(distance):
+    leftMotor.set_degrees_counted(0)
 
-
-def single_follow(duration):
-    timer.reset()
+    goal_degrees = (distance / 17.5) * 360
 
     correction_factor = 0.3
-    while timer.now() < duration:
+    while leftMotor.get_degrees_counted() < goal_degrees:
         error = leftSensor.get_reflected_light() - 50
         correction = error * correction_factor
-        motorPair.start_tank_at_power(int(basePower + correction), int(basePower - correction))
+        motorPair.start_tank_at_power(int(base_power + correction), int(base_power - correction))
     motorPair.stop()
 
-
-def double_follow(duration):
-    correction_factor = 0.3
-
-    while timer.now() < duration:
-        error = leftSensor.get_reflected_light() - rightSensor.get_reflected_light()
-        correction = error * correction_factor
-        motorPair.start_tank_at_power(int(basePower + correction), int(basePower - correction))
+def find_line():
+    motorPair.start(0, 40)
+    while leftSensor.get_reflected_light() > 40:
+        pass
     motorPair.stop()
+
 
 
 while True:
     if primeHub.left_button.was_pressed():
+        find_line()
+        lightMatrix.show_image("SKULL", 100)
         single_follow(15)
-    if primeHub.right_button.was_pressed():
-        double_follow(15)

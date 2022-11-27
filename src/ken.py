@@ -1,4 +1,5 @@
-from spike import MotorPair
+from spike import MotorPair, Motor, LightMatrix
+from spike.control import sleep
 
 
 def doSomething(motor_pair):
@@ -7,6 +8,11 @@ def doSomething(motor_pair):
 
 
 
+left_motor = Motor("E")
+
+left_motor.set_default_speed(25)
+left_motor.run_for_degrees()
+sleep
 mp = MotorPair("A","B")
 
 mp.set_default_speed(100)
