@@ -41,7 +41,27 @@ def double_follow(duration):
         correction = error * correction_factor
         motorPair.start_tank_at_power(int(basePower + correction), int(basePower - correction))
     motorPair.stop()
-		
-		
-		
-		
+
+def turn(degrees=0, speed=100):
+    real_degrees = degrees*.95
+    primeHub.motion_sensor.reset_yaw_angle()
+    yaw = primeHub.motion_sensor.get_yaw_angle()
+    AB.start_tank(speed,speed*-1)
+    while(abs(yaw)<real_degrees):
+        yaw = primeHub.motion_sensor.get_yaw_angle()
+    AB.stop()
+
+def left(degrees=0, speed=100):
+    turn(degrees,speed*-1)
+
+def right(degrees=0, speed=100):
+    turn(degrees,speed)
+
+def drive(duration):
+    primeHub.motion_sensor.reset_yaw_angle()
+    correction_factor = 3
+    while timer.now() < duration:
+        error = primeHub.motion_sensor.get_yaw_angle()
+        correction = error * correction_factor
+        AB.start_tank_at_power(int(basePower - correction), int(basePower + correction))
+    AB.stop()
