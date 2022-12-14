@@ -5,19 +5,19 @@ from math import *
 #variables
 hub = PrimeHub()
 AB = MotorPair('A','B')
-E = Motor('E')
-F = Motor('F')
+E = Motor('E')#top
+F = Motor('F')#side
 leftSensor = ColorSensor('C')
 rightSensor = ColorSensor('D')
 rightMotor = Motor('B')
 timer = Timer()
 
 #turning
-'''def getHeading():
+def getHeading():
     heading = hub.motion_sensor.get_yaw_angle()
     if(heading<0):
         heading+=360
-    return(heading)'''
+    return(heading)
 
 def turnToHeading(heading=0,speed=100):
 
@@ -26,7 +26,7 @@ def turnToHeading(heading=0,speed=100):
     
     allowedError = stopErrorSetting * (speed / 100.0)
 
-    keepTurning = True
+    keepTurning = True#boolean
     while(keepTurning):
         # Should we turn left or right
         turnFactor = speed * leftOrRight(heading)
@@ -94,25 +94,26 @@ def double_follow(duration):
     AB.stop()
 
 #driving
-def driveS(duration,heading):
+def driveSeconds(duration,heading):
     turn(heading)
     correction_factor = 3
+    timer.reset()
     while timer.now() < duration:
         error = hub.motion_sensor.get_yaw_angle()
         correction = error * correction_factor
         AB.start_tank_at_power(int(basePower - correction), int(basePower + correction))
     AB.stop()
-def driveD(distance,heading):
+def driveDistance(distance,heading):
 	cm_per_degree = (17.5 / 360) * 1.0  
 	turn(heading)
-	rightMotor.set_degrees_counted(0)
+	base_power = 30
+    rightMotor.set_degrees_counted(0)
 	correction_factor = 3
 	traveled = 0
-	lightMatrix.show_image("ARROW_N")
 	while traveled < distance:
 		error = hub.motion_sensor.get_yaw_angle()
 		correction = error * correction_factor
-		motorPair.start_tank_at_power(int(base_power - correction), int(base_power + correction))
+		AB.start_tank_at_power(int(base_power - correction), int(base_power + correction))
 		traveled = cm_per_degree * rightMotor.get_degrees_counted()
 		print("Traveled: %s" % traveled)
 	motorPair.stop()
