@@ -1,15 +1,14 @@
-from spike import PrimeHub, LightMatrix, Button, StatusLight, ForceSensor, MotionSensor, Speaker, ColorSensor, App, DistanceSensor, Motor, MotorPair
-from spike.control import wait_for_seconds, wait_until, Timer
-from math import *
+from spike import PrimeHub, ColorSensor, Motor, MotorPair
+from spike.control import Timer
 
 # Define Global instances of all the parts of the robot we interact with
 hub = PrimeHub()
-AB = MotorPair('A', 'B')
+drive_motor_pair = MotorPair('A', 'B')
 side_attachment_motor = Motor('E') 
 top_attachment_motor = Motor('F') 
-leftSensor = ColorSensor('C')
-rightSensor = ColorSensor('D')
-rightMotor = Motor('B')
+left_sensor = ColorSensor('C')
+right_sensor = ColorSensor('D')
+right_drive_motors = Motor('B')
 timer = Timer()
 
 
@@ -68,14 +67,14 @@ def set_heading(heading=0, speed=100):
         actual_turn_speed = speed * determine_turn_direction(heading)
         
         # Start turning
-        AB.start_tank(actual_turn_speed, actual_turn_speed * -1)
+        drive_motor_pair.start_tank(actual_turn_speed, actual_turn_speed * -1)
         
         # Decide is we should keep turning based on the current heading being between the 
         # desired heading + and - the allowed error.
         keep_turning = not (heading - allowed_error <= get_heading() <= heading + allowed_error)
     
     # Stop turning
-    AB.stop()
+    drive_motor_pair.stop()
 
     # Double check to make sure we are inside the acceptable error margin.  If we are not inside 
     # the acceptable error margin then we should try to turn to the desired heading again up at 
@@ -133,11 +132,11 @@ def stop_on_line(timeout=10):
     timer.reset()
     
     while True:
-        if leftSensor.get_reflected_light() < 50.0:
-            AB.stop()
+        if left_sensor.get_reflected_light() < 50.0:
+            drive_motor_pair.stop()
             return True
         if timer.now() > timeout:
-            AB.stop()
+            drive_motor_pair.stop()
             return False
 
 
@@ -154,14 +153,14 @@ def follow_for_time(duration=5, base_power=40, correction_factor=0.3):
         correction_factor : float
             A number to determine how frequently the robot should turn back. (default 0.3)
     """
-    AB.start(0, 30)
+    drive_motor_pair.start(0, 30)
     stop_on_line()
     timer.reset()
     while timer.now() < duration:
-        error = leftSensor.get_reflected_light() - 50
+        error = left_sensor.get_reflected_light() - 50
         correction = error * correction_factor
-        AB.start_tank_at_power(int(base_power + correction), int(base_power - correction))
-    AB.stop()
+        drive_motor_pair.start_tank_at_power(int(base_power + correction), int(base_power - correction))
+    drive_motor_pair.stop()
 
 
 def follow_until_line(base_power=40, correction_factor=0.3):
@@ -175,13 +174,13 @@ def follow_until_line(base_power=40, correction_factor=0.3):
         correction_factor : float
             A number to determine how frequently the robot should turn back. (default 0.3)
     """
-    AB.start(0, 30)
+    drive_motor_pair.start(0, 30)
     stop_on_line()
-    while rightSensor.get_reflected_light() > 50:
-        error = leftSensor.get_reflected_light() - 50
+    while right_sensor.get_reflected_light() > 50:
+        error = left_sensor.get_reflected_light() - 50
         correction = error * correction_factor
-        AB.start_tank_at_power(int(base_power + correction), int(base_power - correction))
-    AB.stop()
+        drive_motor_pair.start_tank_at_power(int(base_power + correction), int(base_power - correction))
+    drive_motor_pair.stop()
 
 
 def drive_time(heading=0, duration=5, power=50, correction_factor=3):
@@ -206,7 +205,7 @@ def drive_time(heading=0, duration=5, power=50, correction_factor=3):
     timer.reset()
     while timer.now() < duration:
         drive_heading(heading, power, correction_factor)
-    AB.stop()
+    drive_motor_pair.stop()
 
 
 def drive_distance(heading=0, distance=10, power=50, correction_factor=3):
@@ -229,12 +228,12 @@ def drive_distance(heading=0, distance=10, power=50, correction_factor=3):
     cm_per_degree = (17.5 / 360) * 1.0 
     
     set_heading(heading)
-    rightMotor.set_degrees_counted(0)
+    right_drive_motors.set_degrees_counted(0)
     traveled = 0
     while traveled < distance:
         drive_heading(heading, power, correction_factor)
-        traveled = cm_per_degree * rightMotor.get_degrees_counted()
-    AB.stop()
+        traveled = cm_per_degree * right_drive_motors.get_degrees_counted()
+    drive_motor_pair.stop()
 
 
 def drive_heading(heading=0, power=50, correction_factor=3):
@@ -261,7 +260,7 @@ def drive_heading(heading=0, power=50, correction_factor=3):
             error = error + 0
     
     correction = error * correction_factor
-    AB.start_tank_at_power(int(power - correction), int(power + correction))
+    drive_motor_pair.start_tank_at_power(int(power - correction), int(power + correction))
 
 
 """ 
@@ -288,7 +287,7 @@ def init_fly_swatter():
     top_attachment_motor.set_degrees_counted(0)
 
 
-def position_fly_swatter(setting=360, speed = 20):
+def position_fly_swatter(setting=360, speed=20):
     """ Set the position of the flyswatter attachment
     
         0 = All the way down 
