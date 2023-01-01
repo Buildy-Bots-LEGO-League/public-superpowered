@@ -210,31 +210,35 @@ def drive_time(heading=0, duration=5, power=50, correction_factor=3):
 
 def drive_distance(heading=0, distance=10, power=50, correction_factor=3):
     """ Drive at a heading for a given distance in centimeters
-    
+
     Parameters
     ----------
     heading : int
-        The heading which the robot should drive (default 0) 
+        The heading which the robot should drive (default 0)
     distance : int
         The distance to travel in centimeters (default 10)
     power : int
         The power to move (default 50%)
     correction_factor : int
         A number to determine if the robot is drifting
-       
+
     """
-    
+
     # Calculate the number of centimeters is one degree of movement of the motor
-    cm_per_degree = (17.5 / 360) * 1.0 
-    
+    cm_per_degree = (27.6 / 360) * 1.0
+
     set_heading(heading)
     right_drive_motors.set_degrees_counted(0)
     traveled = 0
-    while traveled < distance:
-        drive_heading(heading, power, correction_factor)
-        traveled = cm_per_degree * right_drive_motors.get_degrees_counted()
+    if(distance>0):
+        while traveled < distance:
+            drive_heading(heading, power, correction_factor)
+            traveled = cm_per_degree * right_drive_motors.get_degrees_counted()
+    else:
+        while traveled < distance:
+            drive_heading(heading, -1*power, correction_factor)
+            traveled = cm_per_degree * abs(right_drive_motors.get_degrees_counted())
     drive_motor_pair.stop()
-
 
 def drive_heading(heading=0, power=50, correction_factor=3):
     """ Move towards a heading
@@ -401,4 +405,4 @@ def position_sword(setting=0, speed=10):
 # TODO: Run 2 sequence 
 # TODO: Run 3 sequence 
 # TODO: Run 4 sequence
-# TODO: Run 5 sequence 
+# TODO: Run 5 sequence
