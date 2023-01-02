@@ -235,7 +235,7 @@ def drive_distance(heading=0, distance=10, power=50, correction_factor=3):
             drive_heading(heading, power, correction_factor)
             traveled = cm_per_degree * right_drive_motors.get_degrees_counted()
     else:
-        while traveled < distance:
+        while traveled < distance * -1:
             drive_heading(heading, -1*power, correction_factor)
             traveled = cm_per_degree * abs(right_drive_motors.get_degrees_counted())
     drive_motor_pair.stop()
