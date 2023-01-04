@@ -41,7 +41,7 @@ def get_heading():
     return heading
 
 
-def set_heading(heading=0, speed=100):
+def set_heading(heading=0, speed=10):
     """ Turn the robot to the specified heading at the specified speed
     
     Parameters
@@ -183,7 +183,7 @@ def follow_until_line(base_power=40, correction_factor=0.3):
     drive_motor_pair.stop()
 
 
-def drive_time(heading=0, duration=5, power=50, correction_factor=3):
+def drive_time(heading=0, duration=5, power=30, correction_factor=3):
     """ Drive at a heading for a given number of seconds 
     
     Parameters
@@ -208,7 +208,7 @@ def drive_time(heading=0, duration=5, power=50, correction_factor=3):
     drive_motor_pair.stop()
 
 
-def drive_distance(heading=0, distance=10, power=50, correction_factor=3):
+def drive_distance(heading=0, distance=10, power=30, correction_factor=3):
     """ Drive at a heading for a given distance in centimeters
 
     Parameters
@@ -240,7 +240,7 @@ def drive_distance(heading=0, distance=10, power=50, correction_factor=3):
             traveled = cm_per_degree * abs(right_drive_motors.get_degrees_counted())
     drive_motor_pair.stop()
 
-def drive_heading(heading=0, power=50, correction_factor=3):
+def drive_heading(heading=0, power=30, correction_factor=3):
     """ Move towards a heading
     
     Parameters
@@ -253,6 +253,7 @@ def drive_heading(heading=0, power=50, correction_factor=3):
         A number to determine if the robot is drifting
     
     """
+    set_heading(heading)
 
     # Calculate how far off of the desired heading the robot is currently pointing
     error = get_heading() - heading
