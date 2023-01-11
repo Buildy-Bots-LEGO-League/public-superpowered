@@ -235,6 +235,20 @@ def drive_distance(heading=0, distance=10, power=50, correction_factor=3):
             traveled = cm_per_degree * abs(right_drive_motors.get_degrees_counted())
     drive_motor_pair.stop()
 
+def drive_until_line(power = 50, correction_factor = 3):
+    """ Drive at a givin speed until a line
+    Parameters
+    ----------
+    power : int
+        The power to move (default 50%)
+    correction_factor : int
+        A number to determine if the robot is drifting
+    """
+
+        while left_sensor.get_reflected_light() > 50:
+        drive_heading(get_heading(), power, correction_factor)
+    drive_motor_pair.stop()
+
 
 def drive_heading(heading=0, power=50, correction_factor=3, turn_first=False):
     """ Move towards a heading
