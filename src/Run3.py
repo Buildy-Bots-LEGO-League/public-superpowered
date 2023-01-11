@@ -412,7 +412,9 @@ drive_distance(north_east, 85)
 drive_distance(north_east, -23)
 set_heading(north, 15)
 drive_time(north, 2, 30)
-drive_distance(north, -4)
-drive_distance(east, 73, 60)
+drive_distance(north, -5)
+set_heading(east, 15)
+drive_distance(east, 73, 62)
 drive_distance(south_east, 85, 100)
+
 
