@@ -1,16 +1,17 @@
-from spike import PrimeHub, ColorSensor, Motor, MotorPair
-from spike.control import Timer, wait_for_seconds
+from spike import PrimeHub, ColorSensor, Motor, MotorPair, LightMatrix
+from spike.control import Timer
 
 # Define Global instances of all the parts of the robot we interact with
 hub = PrimeHub()
 drive_motor_pair = MotorPair('A', 'B')
-#side_attachment_motor = Motor('E')
-#top_attachment_motor = Motor('F')
+side_attachment_motor = Motor('E')
+top_attachment_motor = Motor('F')
 left_sensor = ColorSensor('C')
 right_sensor = ColorSensor('D')
 right_drive_motors = Motor('B')
-timer = Timer()
+light_matrix = hub.light_matrix
 
+timer = Timer()
 
 """
     ***********************************************
@@ -28,7 +29,6 @@ def init_movement():
 
 def get_heading():
     """ Get the current heading of the robot
-
     Returns
     -------
     int
@@ -41,9 +41,8 @@ def get_heading():
     return heading
 
 
-def set_heading(heading=0, speed=100):
+def set_heading(heading=0, speed=30):
     """ Turn the robot to the specified heading at the specified speed
-
     Parameters
     ----------
     heading : int
@@ -53,9 +52,9 @@ def set_heading(heading=0, speed=100):
     """
 
     # Tuning variables
-    acceptable_error = 3    # The number of degrees we need to be within the target
+    acceptable_error = 3# The number of degrees we need to be within the target
     stop_error_setting = 5# A control to adjust when the robot stops turning
-    minimum_speed = 10    # The lowest speed to continue trying to correct the error
+    minimum_speed = 10# The lowest speed to continue trying to correct the error
 
     # Calculate an acceptable point to stop turning based on the speed of the turn
     allowed_error = stop_error_setting * (speed / 100)
@@ -86,7 +85,6 @@ def set_heading(heading=0, speed=100):
 
 def determine_turn_direction(goal_heading):
     """ Determine the direction to turn based on the current heading and the desired goal heading
-
     Parameters
     ----------
     goal_heading : int
@@ -115,9 +113,7 @@ def determine_turn_direction(goal_heading):
 
 def stop_on_line(timeout=10):
     """ Stop the robot when the left sensor sees black
-
         Note this function assumed the robot is moving
-
         Parameters
         ----------
         timeout : int
@@ -126,24 +122,27 @@ def stop_on_line(timeout=10):
         -------
         boolean
             True if the black line was found, false if the timeout was reached
-
     """
 
+    light_matrix.show_image("CHESSBOARD")
     timer.reset()
 
     while True:
+        print(left_sensor.get_reflected_light())
         if left_sensor.get_reflected_light() < 50.0:
             drive_motor_pair.stop()
+            light_matrix.show_image("HAPPY")
             return True
         if timer.now() > timeout:
             drive_motor_pair.stop()
+            print(timeout)
+            light_matrix.show_image("ANGRY")
             return False
 
 
-def follow_for_time(duration=5, base_power=40, correction_factor=0.3):
+def follow_for_time(duration=5, base_power=20, correction_factor=0.3):
     """ Follow a line which is just in front of the robot for a given number of seconds
         using the left sensor.
-
         Parameters
         ----------
         duration : int
@@ -166,7 +165,6 @@ def follow_for_time(duration=5, base_power=40, correction_factor=0.3):
 def follow_until_line(base_power=40, correction_factor=0.3):
     """ Follow a line which is just in front of the robot using the left sensor until the
         right sensor detects a black line.
-
         Parameters
         ----------
         base_power : int
@@ -183,9 +181,8 @@ def follow_until_line(base_power=40, correction_factor=0.3):
     drive_motor_pair.stop()
 
 
-def drive_time(heading=0, duration=5, power=50, correction_factor=3):
+def drive_time(heading=0, duration=5, power=60, correction_factor=3):
     """ Drive at a heading for a given number of seconds
-
     Parameters
     ----------
     heading : int
@@ -196,7 +193,6 @@ def drive_time(heading=0, duration=5, power=50, correction_factor=3):
         The power to move. (default 50%)
     correction_factor : int
         A number to determine if the robot is drifting.
-
     """
 
     # Turn the robot in the direction we want to move
@@ -210,7 +206,6 @@ def drive_time(heading=0, duration=5, power=50, correction_factor=3):
 
 def drive_distance(heading=0, distance=10, power=50, correction_factor=3):
     """ Drive at a heading for a given distance in centimeters
-
     Parameters
     ----------
     heading : int
@@ -221,7 +216,6 @@ def drive_distance(heading=0, distance=10, power=50, correction_factor=3):
         The power to move (default 50%)
     correction_factor : int
         A number to determine if the robot is drifting
-
     """
 
     # Calculate the number of centimeters is one degree of movement of the motor
@@ -230,15 +224,20 @@ def drive_distance(heading=0, distance=10, power=50, correction_factor=3):
     set_heading(heading)
     right_drive_motors.set_degrees_counted(0)
     traveled = 0
-    while traveled < distance:
-        drive_heading(heading, power, correction_factor)
-        traveled = cm_per_degree * right_drive_motors.get_degrees_counted()
+    if (distance > 0):
+        while traveled < distance:
+            drive_heading(heading, power, correction_factor)
+            ##
+            traveled = cm_per_degree * right_drive_motors.get_degrees_counted()
+    else:
+        while traveled < distance * -1:
+            drive_heading(heading, -1 * power, correction_factor)
+            traveled = cm_per_degree * abs(right_drive_motors.get_degrees_counted())
     drive_motor_pair.stop()
 
 
-def drive_heading(heading=0, power=50, correction_factor=3):
+def drive_heading(heading=0, power=50, correction_factor=3, turn_first=False):
     """ Move towards a heading
-
     Parameters
     ----------
     heading : int
@@ -247,8 +246,10 @@ def drive_heading(heading=0, power=50, correction_factor=3):
         The power to move
     correction_factor : int
         A number to determine if the robot is drifting
-
     """
+
+    if (turn_first):
+        set_heading(heading)
 
     # Calculate how far off of the desired heading the robot is currently pointing
     error = get_heading() - heading
@@ -271,28 +272,22 @@ def drive_heading(heading=0, power=50, correction_factor=3):
 
 """
     The FLYSWATTER
-
     This attachment uses the top motor to raise and lower parts in front of the robot
 """
 
 
 def init_fly_swatter():
     """ Initialize the fly swatter attachment.
-
     The attachment should be manually adjusted to be flow on the surface in front of the robot.
-
     Fully down will be set to 0 degrees
-
     """
     top_attachment_motor.set_degrees_counted(0)
 
 
-def position_fly_swatter(setting=360, speed=20):
+def position_fly_swatter(setting=360, speed=75):
     """ Set the position of the flyswatter attachment
-
         0 = All the way down
         360 = All the way up
-
         Parameters
         ----------
         setting : int
@@ -309,7 +304,7 @@ def position_fly_swatter(setting=360, speed=20):
         setting = 0
 
     # A hire setting is actually a lower turn so flip the setting
-    setting = setting*-1
+    setting = setting * -1
 
     if current > setting:
         # Move down
@@ -321,26 +316,21 @@ def position_fly_swatter(setting=360, speed=20):
 
 """
     The SWORD
-
     This attachment uses the side motor.
 """
 
 
 def init_sword():
     """ Initialize the sword attachment
-
     The attachment should be manually adjusted upward as far as possible
-
     """
     side_attachment_motor.set_degrees_counted(0)
 
 
-def position_sword(setting=0, speed=10):
+def position_sword(setting=0, speed=50):
     """ Set the position of the sword attachment
-
-        0 = All the way up
-        115 = All the way down
-
+        0 = All the way down
+        90 = All the way up
         Parameters
         ----------
         setting : int
@@ -350,7 +340,7 @@ def position_sword(setting=0, speed=10):
     """
     min_setting = 0
     # TODO: determine action max value for down
-    max_setting = 115
+    max_setting = 90
 
     if setting < min_setting:
         setting = min_setting
@@ -366,7 +356,6 @@ def position_sword(setting=0, speed=10):
 
 """
     The DISPENSER
-
     This attachment uses the top attachment motor to dispense energy units
 """
 
@@ -375,7 +364,6 @@ def position_sword(setting=0, speed=10):
 
 """
     The DROPPER
-
     This attachment uses the side attachment motor deliver packages.
 """
 
@@ -384,12 +372,26 @@ def position_sword(setting=0, speed=10):
 
 """
     The CLAW
-
     This attachment uses the side attachment motor grab.
 """
 
 # TODO: Initialize claw
 # TODO: Operate claw
+
+"""
+    ***********************************************
+    * Program sequences
+    ***********************************************
+"""
+north = 0
+north_east = 45
+east = 90
+south_east = 135
+south = 180
+south_west = 225
+west = 270
+north_west = 315
+
 
 """
     ***********************************************
@@ -403,30 +405,14 @@ def position_sword(setting=0, speed=10):
 # Start at west, point to north (0)
 
 init_movement()
-#Run 3 below
-drive_motor_pair.start_tank_at_power(50,50)
-stop_on_line()
-set_heading(33)
-drive_motor_pair.start_tank_at_power(40,40)
-wait_for_seconds(0.3)
-stop_on_line()
-set_heading(0,50)
-#drive_distance(heading=40, distance=7)
-#set_heading(2)
 
-#drive_distance(0,distance=8)
-"""set_heading()
-drive_time(heading=0, duration=5, power=50, correction_factor=3)
-drive_time(heading=0, duration=5, power=-50, correction_factor=3)
-set_heading(heading=90)
-drive_motor_pair.start_tank_at_power(50,50)
-stop_on_line()
-drive_motor_pair.start_tank_at_power(20,20)
-stop_on_line()
-set_heading(heading=135)
-drive_time(heading=0, duration=5, power=50, correction_factor=3)
-#Set up for Run 4
-"""
-# TODO: Run 4 sequence
-# TODO: Run 5 sequence
-exit(0)
+#Run 3 below
+drive_distance(north, 25)
+drive_distance(north_east, 85)
+drive_distance(north_east, -23)
+set_heading(north, 15)
+drive_time(north, 2, 30)
+drive_distance(north, -4)
+drive_distance(east, 73, 60)
+drive_distance(south_east, 85, 100)
+
