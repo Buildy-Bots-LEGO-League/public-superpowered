@@ -1,5 +1,5 @@
 from spike import PrimeHub, ColorSensor, Motor, MotorPair, LightMatrix
-from spike.control import Timer
+from spike.control import Timer, wait_for_seconds
 
 # Define Global instances of all the parts of the robot we interact with
 hub = PrimeHub()
@@ -375,12 +375,15 @@ def position_sword(setting=0, speed=50):
 """
 
 def init_dispenser():
-    pass
+    side_attachment_motor.set_degrees_counted(0)
 
-def dispense(times = 1):
+def dispense(times = 1,speed = 100):
     if(times<1):
         times=1
-    pass
+    for step in range(times):
+        side_attachment_motor.run_to_degrees_counted(360,speed)
+        wait_for_seconds(.1)
+        side_attachment_motor.run_to_degrees_counted(0,speed)
 
 """
     The DROPPER
@@ -388,10 +391,12 @@ def dispense(times = 1):
 """
 
 def init_dropper():
-    pass
+    top_attachment_motor.set_degrees_counted(0)
 
 def drop():
-    pass
+    top_attachment_motor.run_to_degrees_counted(-70)
+    wait_for_seconds(.5)
+    top_attachment_motor.run_to_degrees_counted(0)
 """
     The CLAW
     This attachment uses the side attachment motor grab.
@@ -415,9 +420,11 @@ west = 270
 north_west = 315
 
 init_movement()
+init_dispenser()
+
 drive_distance(north+20,50,70)
 drive_time(north,2)
-dispense(3)#not made yet
+dispense(3)
 drive_distance(north,-35)
 drive_distance(north_east,-35)
 raise SystemExit
