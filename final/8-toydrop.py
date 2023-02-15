@@ -375,15 +375,10 @@ def position_sword(setting=0, speed=50):
 """
 
 def init_dispenser():
-    side_attachment_motor.set_degrees_counted(0)
+    top_attachment_motor.set_degrees_counted(0)
 
-def dispense(times = 1,speed = 100):
-    if(times<1):
-        times=1
-    for step in range(times):
-        side_attachment_motor.run_to_degrees_counted(360,speed)
-        wait_for_seconds(.1)
-        side_attachment_motor.run_to_degrees_counted(0,speed)
+def position_dispenser(position=0,power=50):
+    top_attachment_motor.run_to_degrees_counted(position,power)
 
 """
     The DROPPER
@@ -393,10 +388,10 @@ def dispense(times = 1,speed = 100):
 def init_dropper():
     top_attachment_motor.set_degrees_counted(0)
 
-def drop():
-    top_attachment_motor.run_to_degrees_counted(-70)
+def drop(position = 0, speed = 50):
+    top_attachment_motor.run_to_degrees_counted(position,speed)
     wait_for_seconds(.5)
-    top_attachment_motor.run_to_degrees_counted(0)
+    top_attachment_motor.run_to_degrees_counted(0,speed)
 """
     The CLAW
     This attachment uses the side attachment motor grab.
@@ -419,38 +414,16 @@ south_west = 225
 west = 270
 north_west = 315
 
-
-# Run 4 by Liam
 init_movement()
-init_dropper()
 init_dispenser()
+init_dropper()
 
-# go to toy factory
-drive_distance(north,40)
-set_heading(north_west)
-drive_distance(north_west,30)
-set_heading(south_west,20)
-drive_time(south_west,1,30)
-
-# dispense units at toy factory
-dispense(3)
-
-# go to power to x
-drive_time(south_west,1,-30)
-set_heading(west,20)
-drive_until_line(west)
-drive_distance(west,10)
-set_heading(west-15)
-drive_distance(west-15)
-
-
-# drop model in power to x
-drop()
-
-# go to west home
-set_heading(south_west,20)
-drive_distance(south_west,60)
+drive_distance(north,20)
 set_heading(west)
-drive_time(west,1,80)
-
+drive_distance(west,30)
+set_heading(north_west)
+drive_distance(north_west,10,30)
+drop(70,10)
+drop(0,100)
+drive_distance(north_west,-70)
 raise SystemExit
