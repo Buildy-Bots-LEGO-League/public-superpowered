@@ -41,7 +41,7 @@ def get_heading():
     return heading
 
 
-def set_heading(heading=0, speed=30):
+def set_heading(heading=0, speed=20):
     """ Turn the robot to the specified heading at the specified speed
     Parameters
     ----------
@@ -386,12 +386,13 @@ def position_dispenser(position=0,power=50):
 """
 
 def init_dropper():
-    top_attachment_motor.set_degrees_counted(0)
+    side_attachment_motor.set_degrees_counted(0)
 
 def drop(position = 0, speed = 50):
-    top_attachment_motor.run_to_degrees_counted(position,speed)
-    wait_for_seconds(.5)
-    top_attachment_motor.run_to_degrees_counted(0,speed)
+    side_attachment_motor.run_to_degrees_counted(position,speed)
+    #wait_for_seconds(.5)
+    #side_attachment_motor.run_to_degrees_counted(0,speed)
+
 """
     The CLAW
     This attachment uses the side attachment motor grab.
@@ -415,18 +416,37 @@ west = 270
 north_west = 315
 
 init_movement()
+init_dropper()
 
+'''
 drive_distance(north,20)
 set_heading(west)
 drive_until_line(west)
 drive_distance(west,-30)
 set_heading(north_west)
-drive_distance(north_west,47)
+drive_distance(north_west,44)
 set_heading(south)
-drive_distance(south,37)
-drive_distance(south,-37)
+drive_distance(south,47)
+drive_distance(south,-47)
 set_heading(south_west)
-drive_distance(south_west,47)
+drive_distance(south_west, 44)
 set_heading(west)
-drive_time(west,2,100)
+drive_time(2,100)'''
+
+drive_distance(north,35,65)
+set_heading(north_west, 25)
+drive_distance(north_west,36,70)
+set_heading(west)
+drive_distance(west,45,75)
+set_heading(south+5)
+drive_distance(south+5,15)
+drop(-90, 70)
+drive_time(south+5, 3,40)
+drop(0)
+#drive_distance(south+5,40)
+drive_distance(south+5,-30)
+set_heading(south_west)
+drive_distance(south_west,35,100)
+drive_distance(west,50,100)
+
 raise SystemExit
