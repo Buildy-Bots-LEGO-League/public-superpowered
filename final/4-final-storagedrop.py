@@ -375,15 +375,12 @@ def position_sword(setting=0, speed=50):
 """
 
 def init_dispenser():
-    side_attachment_motor.set_degrees_counted(0)
+    top_attachment_motor.set_degrees_counted(0)
 
-def dispense(times = 1,speed = 100):
-    if(times<1):
-        times=1
-    for step in range(times):
-        side_attachment_motor.run_to_degrees_counted(360,speed)
-        wait_for_seconds(.1)
-        side_attachment_motor.run_to_degrees_counted(0,speed)
+def dispense(position=0,speed = 100):
+    top_attachment_motor.run_to_degrees_counted(position,speed)
+    wait_for_seconds(.1)
+    top_attachment_motor.run_to_degrees_counted(0,30)
 
 """
     The DROPPER
@@ -422,9 +419,10 @@ north_west = 315
 init_movement()
 init_dispenser()
 
-drive_distance(north+20,50,70)
+drive_distance(north+20,60,70)
 drive_time(north,2)
-dispense(3)
-drive_distance(north,-35)
-drive_distance(north_east,-35)
+dispense(90,30)
+drive_distance(north,-75)
+set_heading(west)
+drive_distance(west,40)
 raise SystemExit
