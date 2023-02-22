@@ -419,11 +419,11 @@ init_sword()
 # assuming front of the robot is 30 cm away from the southern wall.
 
 # activates TV
-drive_distance(north, 47, 35)
+drive_distance(north, 48, 50)
 drive_distance(north, -10)
 
 # drive to windmill
-drive_distance(north_west, 37)
+drive_distance(north_west, 35)
 
 # activate windmill
 set_heading(north_east, 15)
@@ -441,24 +441,24 @@ drive_distance(north_east, -4)
 
 set_heading(west, 15)
 drive_until_line(west, 50)
-drive_distance(west, 15)
+position_sword(75,25)
+drive_distance(west, 12)
 
 print("West: %s" % (get_heading()))
 south_correction = 4
 
 # drive to hed
-set_heading(south_west+10, 20)
-position_sword(75,25)
+set_heading(south_west, 20)
 print("Southwest: %s" % (get_heading()))
-drive_distance(south_west+10,33)
+drive_distance(south_west,33)
 
 print("Southwest: %s" % (get_heading()))
 #set_heading(south_west)
-set_heading(south_west+20)
+set_heading(south_west+30)
 position_sword(50,100)
 
 set_heading(south_west+10)
-drive_distance(south_west+10,30)
+drive_distance(south_west+10,50)
 position_sword(0,100)
 drive_time(west,2,100)
 
