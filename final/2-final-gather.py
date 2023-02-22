@@ -399,20 +399,21 @@ north_west = 315
     ***********************************************
 """
 
-# TODO: Run 1 sequence
-# TODO: Run 2 sequence
-# TODO: Run 3 sequence
+
 # Start at west, point to north (0)
 
 init_movement()
 
-drive_distance(north, 25)
-drive_distance(north_east, 85)
-drive_distance(north_east, -24)
+drive_distance(north, 22)
+set_heading(north_east)
+drive_distance(north_east, 83)
+drive_distance(north_east, -27)
 set_heading(north+5, 15)
 drive_time(north+5, 2, 75)
-drive_distance(north, -6.5)
+drive_distance(north, -10)
 set_heading(east, 15)
-drive_distance(east, 73, 62)
+drive_distance(east, 70, 62)
+set_heading(south_east)
 drive_distance(south_east, 85, 100)
 
+raise SystemExit
