@@ -183,5 +183,5 @@ north_west = 315
 
 init_movement()
 drive_distance(north, 200, 100)
-
-
+drive_distance(north, 10, 20)
+raise SystemExit
