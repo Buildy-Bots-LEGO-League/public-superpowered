@@ -418,6 +418,7 @@ north_west = 315
 init_movement()
 init_dropper()
 
+#OLD:
 '''
 drive_distance(north,20)
 set_heading(west)
@@ -433,9 +434,11 @@ drive_distance(south_west, 44)
 set_heading(west)
 drive_time(2,100)'''
 
+
+
 drive_distance(north,35,65)
 set_heading(north_west, 25)
-drive_distance(north_west,36,70)
+drive_distance(north_west,36,65)
 set_heading(west)
 drive_distance(west,45,75)
 set_heading(south+5)
@@ -443,7 +446,6 @@ drive_distance(south+5,15)
 drop(-90, 70)
 drive_time(south+5, 3,40)
 drop(0)
-#drive_distance(south+5,40)
 drive_distance(south+5,-30)
 set_heading(south_west)
 drive_distance(south_west,35,100)
