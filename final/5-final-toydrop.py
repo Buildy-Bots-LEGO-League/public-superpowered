@@ -420,12 +420,13 @@ init_dropper()
 
 drive_distance(north,20)
 set_heading(east-2,20)
-drive_distance(east-2,108)
+drive_distance(east-2,108)#test different numbers for east+2 to see which one is straight
 set_heading(north_east,20)
 drive_distance(north_east,-13)
 set_heading(north_east)
 position_dispenser(100,40)
 position_dispenser(10)
+#drive_distance(north_east,-10)
 set_heading(east)
 drive_time(east,2,100)
 raise SystemExit
