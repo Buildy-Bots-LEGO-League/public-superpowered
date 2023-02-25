@@ -411,8 +411,8 @@ north_west = 315
 
 # Run 1 by Liam
 init_movement()
-init_fly_swatter()
-init_sword()
+#init_fly_swatter()
+#init_sword()
 
 
 
@@ -436,30 +436,18 @@ drive_distance(north_east, -4)
 
 
 
-#drive_distance(north_east, 3, 50)
-# drive to center line
+# drive past center line
 
 set_heading(west, 15)
 drive_until_line(west, 50)
-position_sword(75,25)
-drive_distance(west, 12)
+#position_sword(75,25)
+drive_distance(west,80)
 
-print("West: %s" % (get_heading()))
 south_correction = 4
 
 # drive to hed
-set_heading(south_west, 20)
-print("Southwest: %s" % (get_heading()))
-drive_distance(south_west,33)
+set_heading(south_west-20, 20)
 
-print("Southwest: %s" % (get_heading()))
-#set_heading(south_west)
-set_heading(south_west+30)
-position_sword(50,100)
-
-set_heading(south_west+10)
-drive_distance(south_west+10,50)
-position_sword(0,100)
-drive_time(west,2,100)
+drive_time(south_west-20,2,100)
 
 raise SystemExit
