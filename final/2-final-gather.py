@@ -404,13 +404,13 @@ north_west = 315
 
 init_movement()
 
-drive_distance(north, 22)
-set_heading(north_east)
+drive_distance(north, 23)
+set_heading(north_east-2,15)
 drive_distance(north_east, 83)
 drive_distance(north_east, -27)
 set_heading(north+5, 15)
 drive_time(north+5, 2, 75)
-drive_distance(north, -10)
+drive_distance(north+5, -10)
 set_heading(east, 15)
 drive_distance(east, 70, 62)
 set_heading(south_east)
